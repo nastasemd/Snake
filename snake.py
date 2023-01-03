@@ -83,13 +83,13 @@ def drawBoard(snake, snakeRotations):
     screen.blit(apple, applePos)
     for i in range (1, len(snake) - 1):
         #corners
-        if(snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90):
+        if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180)):
             screen.blit(cornerUpLeft, snake[i])
-        elif(snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270):
+        elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180)):
             screen.blit(cornerUpRight, snake[i])
-        elif(snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90):
+        elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0)):
             screen.blit(cornerDownLeft, snake[i])
-        elif(snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270):
+        elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0)):
             screen.blit(cornerDownRight, snake[i])
         else:
             screen.blit(pg.transform.rotate(bodyImg, snakeRotations[i]), snake[i]) #normal bodypart
