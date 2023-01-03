@@ -117,8 +117,7 @@ def changePositions(snake, snakeRotations, snakeRect, possibleRotations, rotatio
         snakeRotations.append(rotation)
         snakeRect.pop(-1)
         snakeRect.append(pg.Rect(newHead[0], newHead[1], 31, 31))
-        if len(snake) == 2:
-            snakeRotations[0] = snakeRotations[1]
+    snakeRotations[0] = snakeRotations[1]
     return snake, snakeRotations, snakeRect, oldTail, oldTailRotation
 
 def addSnakePart(snake, snakeRotations, snakeRect, applePos):    
