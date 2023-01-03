@@ -26,7 +26,7 @@ possiblePositions = []
 possibleRotations = [0, 90, 180, 270]
 for i in range(100, 400, 31):
     possiblePositions.append(i)
-print(possiblePositions)
+
 def getRandomPosition(possiblePositions):
     x = random.choice(possiblePositions)
     y = random.choice(possiblePositions)
@@ -46,6 +46,7 @@ def randomTailStartingPosition(head):
 def generateStartingSnake(possiblePositions, possibleRotations):
     snake = []
     snakeRotations = []
+    snakeRect = []
     while True:
         startingHeadPosition = getRandomPosition(possiblePositions)
         rotation = getRandomRotation(possibleRotations)
@@ -59,56 +60,104 @@ def generateStartingSnake(possiblePositions, possibleRotations):
             snakeRotations.append(rotation)
             snakeRotations.append(rotation)
             break
-    return snake, snakeRotations
-snake, snakeRotations = generateStartingSnake(possiblePositions, possibleRotations)
+    for x in snake:
+        snakeRect.append(pg.Rect(x[0], x[1], 31, 31))
+    return snake, snakeRotations, snakeRect
+snake, snakeRotations, snakeRect = generateStartingSnake(possiblePositions, possibleRotations)
+
+def getNewApple(snake, possiblePositions):
+    pos = getRandomPosition(possiblePositions)
+    while pos in snake:
+        pos = getRandomPosition(possiblePositions)
+    appleRect = pg.Rect(pos[0], pos[1], 31, 31)
+    return pos, appleRect
+
 def drawBoard():
     screen.blit(board, (100,100))
-    screen.blit(pg.transform.rotate(headImg, snakeRotations[-1]), snake[-1])
-    screen.blit(pg.transform.rotate(tailImg, snakeRotations[-2]), snake[-2])
+    screen.blit(pg.transform.rotate(headImg, snakeRotations[-1]), snake[-1]) # head
+    for i in range (1, len(snake) - 1):
+        screen.blit(pg.transform.rotate(bodyImg, snakeRotations[i]), snake[i]) #bodyparts
+    screen.blit(pg.transform.rotate(tailImg, snakeRotations[0]), snake[0]) # tail
+    screen.blit(apple, applePos)
 
 # Game logic
+applePos, appleRect = getNewApple(snake, possiblePositions)
 clock = pg.time.Clock()
 gameOver = False
 score = 0
 
-def changePositions(snake, snakeRotations, possibleRotations, rotation):
+def changePositions(snake, snakeRotations, snakeRect, possibleRotations, rotation):
     options = [(0, -31), (-31, 0), (0, 31), (31, 0)]
     x = possibleRotations.index(rotation)
+    oldTail = snake[0]
+    oldTailRotation = snakeRotations[0]
     if (snake[-1][0] + options[x][0] >= 100 and snake[-1][0] + options[x][0] <= 379 and snake[-1][1] + options[x][1] >= 100 and snake[-1][1] + options[x][1] <= 379):
         for i in range(len(snake) - 1):
             snake[i] = snake[i+1]
             snakeRotations[i] = snakeRotations[i+1]
+            snakeRect[i] = snakeRect[i+1]
         snake.pop(-1)
         newHead = (snake[-1][0] + options[x][0], snake[-1][1] + options[x][1])
         snake.append(newHead)
         snakeRotations.pop(-1)
         snakeRotations.append(rotation)
+        snakeRect.pop(-1)
+        snakeRect.append(pg.Rect(newHead[0], newHead[1], 31, 31))
         if len(snake) == 2:
             snakeRotations[0] = snakeRotations[1]
-    return snake, snakeRotations
-    
+    return snake, snakeRotations, snakeRect, oldTail, oldTailRotation
+
+def addSnakePart(snake, snakeRotations, snakeRect, applePos):    
+    newHead = applePos
+    snake.append(newHead)
+    snakeRotations.append(snakeRotations[-1])
+    snakeRect.append(pg.Rect(newHead[0], newHead[1], 31, 31))
+    return snake, snakeRotations, snakeRect
+
 direction = None
 # Game loop
 running = True
+oldTail = None
+oldTailRotation = None
+
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_UP:
-                if direction != 180:
+                if direction != 180 and snake[-1][1] - 31 >= 100:
                     direction = 0
             if event.key == pg.K_LEFT:
-                if direction != 270:
+                if direction != 270 and snake[-1][0] - 31 >= 100:
                     direction = 90
             if event.key == pg.K_DOWN:
-                if direction != 0:
+                if direction != 0 and snake[-1][1] + 31 <= 379:
                     direction = 180
             if event.key == pg.K_RIGHT:
-                if direction != 90:
+                if direction != 90 and snake[-1][0] + 31 <= 379:
                     direction = 270
-    if direction != None:
-        snake, snakeRotations = changePositions(snake, snakeRotations, possibleRotations, direction)
+    if gameOver == False:
+        for x in snakeRect:
+            if(x.colliderect(appleRect)):
+                snake.insert(0, oldTail)
+                snakeRotations.insert(0, oldTailRotation)
+                snakeRect.insert(0, pg.Rect(oldTail[0], oldTail[1], 31,31))
+                # snake, snakeRotations, snakeRect = addSnakePart(snake, snakeRotations, snakeRect, applePos)
+                applePos, appleRect = getNewApple(snake, possiblePositions)
+                print(snake)
+                print(snakeRotations)
+                print(snakeRect)
+                screen.fill(BG)
+                drawBoard()
+                pg.display.update()
+        for i in range(len(snakeRect) -1):
+            for j in range(i + 1, len(snakeRect)):
+                if snakeRect[i].colliderect(snakeRect[j]):
+                    gameOver = True
+                    print('Game over!')
+        if direction != None and gameOver == False:
+            snake, snakeRotations, snakeRect, oldTail, oldTailRotation = changePositions(snake, snakeRotations, snakeRect, possibleRotations, direction)
     screen.fill(BG)
     drawBoard()
     pg.display.update()
