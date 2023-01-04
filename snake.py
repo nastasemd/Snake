@@ -7,7 +7,7 @@ Path = os.path.dirname(os.path.abspath(__file__))
 
 # Initializing
 pg.init()
-screen = pg.display.set_mode((1000, 1000))
+screen = pg.display.set_mode((600, 600))
 BG = (60, 120, 250)
 screen.fill(BG)
 
@@ -82,17 +82,24 @@ def drawBoard(snake, snakeRotations):
     screen.blit(pg.transform.rotate(tailImg, snakeRotations[0]), snake[0]) # tail
     screen.blit(apple, applePos)
     for i in range (1, len(snake) - 1):
+        print(snakeRotations)
         #corners
-        if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180)):
-            screen.blit(cornerUpLeft, snake[i])
-        elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180)):
-            screen.blit(cornerUpRight, snake[i])
-        elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0)):
-            screen.blit(cornerDownLeft, snake[i])
-        elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0)):
-            screen.blit(cornerDownRight, snake[i])
+        if snakeRotations[i] != snakeRotations[i+1]:
+            if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270)):
+                screen.blit(cornerUpLeft, snake[i])
+                print(str(i) + ' is cornerUpLeft piece.')
+            elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90)):
+                screen.blit(cornerUpRight, snake[i])
+                print(str(i) + ' is cornerUpRight piece.')
+            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0)):
+                screen.blit(cornerDownLeft, snake[i])
+                print(str(i) + ' is cornerDownLeft piece.')
+            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180)):
+                screen.blit(cornerDownRight, snake[i])
+                print(str(i) + ' is cornerDownRight piece.')
         else:
             screen.blit(pg.transform.rotate(bodyImg, snakeRotations[i]), snake[i]) #normal bodypart
+            print(str(i) + ' is Normal piece.')
 
 # Game logic
 applePos, appleRect = getNewApple(snake, possiblePositions)
