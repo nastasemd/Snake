@@ -85,16 +85,16 @@ def drawBoard(snake, snakeRotations):
         print(snakeRotations)
         #corners
         if snakeRotations[i] != snakeRotations[i+1]:
-            if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 90 and snakeRotations[i] == 0)):
+            if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 90 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 90 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270)):
                 screen.blit(cornerUpLeft, snake[i])
                 print(str(i) + ' is cornerUpLeft piece.')
-            elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 270 and snakeRotations[i] == 0)):
+            elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 270 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 0)):
                 screen.blit(cornerUpRight, snake[i])
                 print(str(i) + ' is cornerUpRight piece.')
-            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0)):
+            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 90 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 90 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 0 and snakeRotations[i] == 270) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 0 and snakeRotations[i] == 270)):
                 screen.blit(cornerDownLeft, snake[i])
                 print(str(i) + ' is cornerDownLeft piece.')
-            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 0 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270):
+            elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 0 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 0 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180)):
                 screen.blit(cornerDownRight, snake[i])
                 print(str(i) + ' is cornerDownRight piece.')
         else:
