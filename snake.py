@@ -7,7 +7,7 @@ Path = os.path.dirname(os.path.abspath(__file__))
 
 # Initializing
 pg.init()
-screen = pg.display.set_mode((600, 600))
+screen = pg.display.set_mode((800, 800))
 BG = (60, 120, 250)
 screen.fill(BG)
 
@@ -82,24 +82,44 @@ def drawBoard(snake, snakeRotations):
     screen.blit(pg.transform.rotate(tailImg, snakeRotations[0]), snake[0]) # tail
     screen.blit(apple, applePos)
     for i in range (1, len(snake) - 1):
-        print(snakeRotations)
-        #corners
+        # surely there's a better way to do this but i'm in no mood to find it
         if snakeRotations[i] != snakeRotations[i+1]:
             if((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 90 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 90 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 270)):
                 screen.blit(cornerUpLeft, snake[i])
-                print(str(i) + ' is cornerUpLeft piece.')
             elif((snakeRotations[i-1] == 0 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 270 and snakeRotations[i] == 0) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 180 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 0)):
                 screen.blit(cornerUpRight, snake[i])
-                print(str(i) + ' is cornerUpRight piece.')
             elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 90) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 90 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 90 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 0 and snakeRotations[i] == 270) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 0 and snakeRotations[i] == 270)):
                 screen.blit(cornerDownLeft, snake[i])
-                print(str(i) + ' is cornerDownLeft piece.')
             elif((snakeRotations[i-1] == 180 and snakeRotations[i+1] == 270) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 0) or (snakeRotations[i-1] == 270 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180) or (snakeRotations[i-1] == 0 and snakeRotations[i+1] == 0 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 180 and snakeRotations[i+1] == 0 and snakeRotations[i] == 90) or (snakeRotations[i-1] == 90 and snakeRotations[i+1] == 270 and snakeRotations[i] == 180)):
                 screen.blit(cornerDownRight, snake[i])
-                print(str(i) + ' is cornerDownRight piece.')
         else:
             screen.blit(pg.transform.rotate(bodyImg, snakeRotations[i]), snake[i]) #normal bodypart
-            print(str(i) + ' is Normal piece.')
+
+# Text and buttons
+font = pg.font.Font("freesansbold.ttf", 32)
+gameOverText = ""
+scoreText = "Score: "
+RestartButton = pg.Rect(500, 150, 130, 50)
+RestartButtonText = font.render('Restart', True, 'white')
+githubText = "github.com/nastasemd"
+
+def showText():
+    topText = font.render("Snake", True, (255, 255, 255))
+    github = font.render(githubText, True, (255, 255, 255))
+    s = font.render(scoreText + str(score), True, (255, 255, 255))
+    screen.blit(topText, (2550, 50))
+    screen.blit(github, (435, 755))
+    screen.blit(s, (500, 100))
+    if gameOverText == "Game over!":
+        gText = font.render(gameOverText, True, (150, 150, 150))
+        screen.blit(gText, (500, 50))
+    if gameOver:
+        mx ,my = pg.mouse.get_pos()
+        if RestartButton.x <= mx <= RestartButton.x + 130 and RestartButton.y <= my <= RestartButton.y + 50:
+            pg.draw.rect(screen, (180, 180, 180), RestartButton)
+        else:
+            pg.draw.rect(screen, (110, 110, 110), RestartButton)
+        screen.blit(RestartButtonText, (RestartButton.x + 5, RestartButton.y + 5))
 
 # Game logic
 applePos, appleRect = getNewApple(snake, possiblePositions)
@@ -157,6 +177,18 @@ while running:
             if event.key == pg.K_RIGHT:
                 if direction != 90 and snake[-1][0] + 31 <= 379:
                     direction = 270
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if RestartButton.collidepoint(event.pos):
+                    snake, snakeRotations, snakeRect = generateStartingSnake(possiblePositions, possibleRotations)
+                    applePos, appleRect = getNewApple(snake, possiblePositions)
+                    gameOver = False
+                    gameOverText = ""
+                    score = 0
+                    oldTail = None
+                    oldTailRotation = None
+                    direction = None
+                    
     if gameOver == False:
         for x in snakeRect:
             if(x.colliderect(appleRect)):
@@ -165,18 +197,22 @@ while running:
                 snakeRect.insert(0, pg.Rect(oldTail[0], oldTail[1], 31,31))
                 # snake, snakeRotations, snakeRect = addSnakePart(snake, snakeRotations, snakeRect, applePos)
                 applePos, appleRect = getNewApple(snake, possiblePositions)
+                score += 100
                 screen.fill(BG)
                 drawBoard(snake, snakeRotations)
+                showText()
                 pg.display.update()
         for i in range(len(snakeRect) -1):
             for j in range(i + 1, len(snakeRect)):
                 if snakeRect[i].colliderect(snakeRect[j]):
                     gameOver = True
+                    gameOverText = "Game over!"
                     print('Game over!')
         if direction != None and gameOver == False:
             snake, snakeRotations, snakeRect, oldTail, oldTailRotation = changePositions(snake, snakeRotations, snakeRect, possibleRotations, direction)
     screen.fill(BG)
     drawBoard(snake, snakeRotations)
+    showText()
     pg.display.update()
-    clock.tick(1)
+    clock.tick(5)
     
